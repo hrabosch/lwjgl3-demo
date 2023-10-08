@@ -1,0 +1,39 @@
+import org.gradle.internal.os.OperatingSystem
+
+buildscript {
+    ext {
+        jomlVersion = '1.10.5'
+        jwjglVersion = '3.3.3'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'application'
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.joml', name: 'joml', version: jomlVersion
+    implementation group: 'org.lwjgl', name: 'lwjgl', version: jwjglVersion
+    implementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: jwjglVersion
+    implementation group: 'org.lwjgl', name: 'lwjgl-opengl', version:jwjglVersion
+    implementation group: 'org.lwjgl', name: 'lwjgl-stb', version:jwjglVersion
+    runtimeOnly group: 'org.lwjgl', name: 'lwjgl', version:jwjglVersion, classifier:getOsNativesName()
+    runtimeOnly group: 'org.lwjgl', name: 'lwjgl-opengl', version:jwjglVersion, classifier:getOsNativesName()
+    runtimeOnly group: 'org.lwjgl', name: 'lwjgl-glfw', version:jwjglVersion, classifier:getOsNativesName()
+    runtimeOnly group: 'org.lwjgl', name: 'lwjgl-stb', version:jwjglVersion, classifier:getOsNativesName()
+}
+
+String getOsNativesName() {
+    String osName = System.getProperty("os.name")
+    OperatingSystem os = OperatingSystem.forName(osName)
+
+    // TODO to lazy to resolve others
+    return os.isWindows() ? 'natives-windows' : os.isMacOsX() ? 'natives-macos' : 'natives-linux'
+
+}
