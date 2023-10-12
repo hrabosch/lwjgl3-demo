@@ -27,6 +27,9 @@ dependencies {
     runtimeOnly group: 'org.lwjgl', name: 'lwjgl-opengl', version:jwjglVersion, classifier:getOsNativesName()
     runtimeOnly group: 'org.lwjgl', name: 'lwjgl-glfw', version:jwjglVersion, classifier:getOsNativesName()
     runtimeOnly group: 'org.lwjgl', name: 'lwjgl-stb', version:jwjglVersion, classifier:getOsNativesName()
+
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+
 }
 
 String getOsNativesName() {
