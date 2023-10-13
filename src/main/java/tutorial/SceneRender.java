@@ -1,5 +1,9 @@
 package tutorial;
 
+import tutorial.texture.Material;
+import tutorial.texture.Texture;
+import tutorial.texture.TextureCache;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,17 +34,26 @@ public class SceneRender {
         shaderProgram.bind();
 
         uniformsMap.setUniform("projectionMatrix", scene.getProjection().getProjMatrix());
+        uniformsMap.setUniform("txtSampler", 0);
 
         Collection<Model> models = scene.getModelMap().values();
+        TextureCache textureCache = scene.getTextureCache();
         for (Model model : models) {
-            model.getMeshList().stream().forEach(mesh -> {
-                glBindVertexArray(mesh.getVaoId());
-                List<Entity> entities = model.getEntitiesList();
-                for (Entity entity : entities) {
-                    uniformsMap.setUniform("modelMatrix", entity.getModelMatrix());
-                    glDrawElements(GL_TRIANGLES, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
+            List<Entity> entities = model.getEntitiesList();
+
+            for (Material material : model.getMaterialList()) {
+                Texture texture = textureCache.getTexture(material.getTexturePath());
+                glActiveTexture(GL_TEXTURE0);
+                texture.bind();
+
+                for (Mesh mesh : material.getMeshList()) {
+                    glBindVertexArray(mesh.getVaoId());
+                    for (Entity entity : entities) {
+                        uniformsMap.setUniform("modelMatrix", entity.getModelMatrix());
+                        glDrawElements(GL_TRIANGLES, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
+                    }
                 }
-            });
+            }
         }
 
         glBindVertexArray(0);
@@ -52,5 +65,6 @@ public class SceneRender {
         uniformsMap = new UniformsMap(shaderProgram.getProgramId());
         uniformsMap.createUniform("projectionMatrix");
         uniformsMap.createUniform("modelMatrix");
+        uniformsMap.createUniform("txtSampler");
     }
 }

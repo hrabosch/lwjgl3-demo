@@ -6,8 +6,7 @@ import org.lwjgl.system.MemoryStack;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
+import static org.lwjgl.opengl.GL20.*;
 
 public class UniformsMap {
 
@@ -28,13 +27,21 @@ public class UniformsMap {
         uniforms.put(uniformName, uniformLocation);
     }
 
+    private int getUniformLocation(String uniformName) {
+        Integer location = uniforms.get(uniformName);
+        if (location == null) {
+            throw new RuntimeException("Could not find uniform [" + uniformName + "]");
+        }
+        return location.intValue();
+    }
+
+    public void setUniform(String uniformName, int value) {
+        glUniform1i(getUniformLocation(uniformName), value);
+    }
+
     public void setUniform(String uniformName, Matrix4f value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            Integer location = uniforms.get(uniformName);
-            if (location == null) {
-                throw new RuntimeException("Could not find uniform [" + uniformName + "]");
-            }
-            glUniformMatrix4fv(location.intValue(), false, value.get(stack.mallocFloat(16)));
+            glUniformMatrix4fv(getUniformLocation(uniformName), false, value.get(stack.mallocFloat(16)));
         }
     }
 }
