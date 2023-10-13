@@ -20,7 +20,7 @@ public class Engine {
         this.targetUps = options.ups;
         this.gameCore = gameCore;
         this.renderer = new Render();
-        this.scene = new Scene();
+        this.scene = new Scene(window.getWidth(), window.getHeight());
         gameCore.init(window, scene, renderer);
         running = true;
     }
@@ -33,6 +33,7 @@ public class Engine {
     }
 
     private void resize() {
+        scene.resize(window.getWidth(), window.getHeight());
     }
 
     private void run() {
